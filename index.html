@@ -1,0 +1,1147 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>MazziGroup Post Editor</title>
+<link rel="icon" type="image/png" href="logo.png">
+
+<!-- PWA METADATA -->
+<link rel="manifest" href="manifest.json">
+<meta name="theme-color" content="#FF5700">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="MazziEditor">
+
+<style>
+  :root {
+    --gold: #FF5700;
+    --gold-light: #FF6B00;
+    --dark: #0A0A0A;
+    --panel: #161616;
+    --panel2: #1E1E1E;
+    --input: #252525;
+    --border: #2A2A2A;
+    --text: #FFFFFF;
+    --muted: #888;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html, body { background: var(--dark); color: var(--text); font-family: 'Segoe UI', Arial, sans-serif; min-height: 100vh; }
+
+  body { animation: appFadeIn 0.8s ease-out; }
+  @keyframes appFadeIn { from { opacity: 0; } to { opacity: 1; } }
+
+  .auth-container {
+    position: fixed;
+    inset: 0;
+    z-index: 1000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+    background: rgba(10,10,10,0.3);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+  }
+
+  .auth-box {
+    background: rgba(22,22,22,0.85);
+    border: 1px solid rgba(255,87,0,0.15);
+    border-radius: 16px;
+    padding: 40px;
+    width: 100%;
+    max-width: 420px;
+    box-shadow: 0 25px 80px rgba(0,0,0,0.6), inset 0 1px 0 rgba(255,255,255,0.05);
+    animation: slideUp 0.6s ease-out;
+  }
+
+  @keyframes slideUp {
+    from { opacity: 0; transform: translateY(30px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  .auth-header { text-align: center; margin-bottom: 30px; }
+
+  .auth-logo {
+    width: 70px;
+    height: 70px;
+    margin: 0 auto 15px;
+    object-fit: contain;
+    filter: drop-shadow(0 0 20px rgba(255,87,0,0.4));
+  }
+
+  .auth-title {
+    font-size: 24px;
+    font-weight: 700;
+    color: var(--gold);
+    margin-bottom: 5px;
+    text-shadow: 0 0 30px rgba(255,87,0,0.2);
+  }
+
+  .auth-subtitle {
+    font-size: 12px;
+    color: var(--muted);
+    letter-spacing: 2px;
+    text-transform: uppercase;
+  }
+
+  .auth-form {
+    display: flex;
+    flex-direction: column;
+    gap: 18px;
+  }
+
+  .form-group {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+  }
+
+  .form-group label {
+    font-size: 12px;
+    color: var(--muted);
+    text-transform: uppercase;
+    letter-spacing: 1px;
+  }
+
+  .form-group input {
+    padding: 12px 16px;
+    background: var(--input);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    color: var(--text);
+    font-size: 14px;
+    outline: none;
+    transition: all 0.3s ease;
+  }
+
+  .form-group input:focus {
+    border-color: var(--gold);
+    box-shadow: 0 0 0 3px rgba(255,87,0,0.1);
+  }
+
+  .remember-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin: 5px 0;
+  }
+
+  .remember-label {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 13px;
+    color: #ccc;
+    cursor: pointer;
+  }
+
+  .remember-label input[type="checkbox"] {
+    width: 16px;
+    height: 16px;
+    accent-color: var(--gold);
+    cursor: pointer;
+  }
+
+  .auth-btn {
+    background: var(--gold);
+    color: #000;
+    border: none;
+    padding: 14px;
+    border-radius: 8px;
+    font-weight: 700;
+    font-size: 14px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    margin-top: 10px;
+  }
+
+  .auth-btn:hover {
+    background: var(--gold-light);
+    transform: translateY(-2px);
+    box-shadow: 0 8px 25px rgba(255,87,0,0.4);
+  }
+
+  .auth-switch {
+    text-align: center;
+    margin-top: 20px;
+    padding-top: 20px;
+    border-top: 1px solid rgba(255,255,255,0.08);
+    font-size: 13px;
+    color: var(--muted);
+  }
+
+  .auth-switch a {
+    color: var(--gold);
+    text-decoration: none;
+    font-weight: 600;
+    cursor: pointer;
+    transition: color 0.3s ease;
+  }
+
+  .auth-switch a:hover {
+    color: var(--gold-light);
+    text-decoration: underline;
+  }
+
+  .error-msg {
+    background: rgba(220,38,38,0.15);
+    border: 1px solid rgba(220,38,38,0.3);
+    color: #fca5a5;
+    padding: 10px 14px;
+    border-radius: 6px;
+    font-size: 13px;
+    display: none;
+    animation: shake 0.5s ease;
+  }
+
+  @keyframes shake {
+    0%, 100% { transform: translateX(0); }
+    25% { transform: translateX(-5px); }
+    75% { transform: translateX(5px); }
+  }
+
+  .error-msg.show { display: block; }
+
+  .success-msg {
+    background: rgba(34,197,94,0.15);
+    border: 1px solid rgba(34,197,94,0.3);
+    color: #86efac;
+    padding: 10px 14px;
+    border-radius: 6px;
+    font-size: 13px;
+    display: none;
+  }
+
+  .success-msg.show { display: block; }
+
+  .hidden { display: none !important; }
+
+  .header {
+    background: linear-gradient(180deg, rgba(22,22,22,0.98) 0%, rgba(18,18,18,0.96) 100%);
+    border-bottom: 1px solid rgba(255,87,0,0.08);
+    padding: 14px 20px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+    flex-wrap: wrap;
+    position: sticky; top: 0; z-index: 100;
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    box-shadow: 0 1px 30px rgba(0,0,0,0.4);
+  }
+
+  .logo-row { display: flex; align-items: center; gap: 12px; }
+
+  .logo-icon {
+    width: 42px; height: 42px;
+    object-fit: contain;
+    flex-shrink: 0;
+    filter: drop-shadow(0 0 12px rgba(255,87,0,0.25));
+    transition: filter 0.3s ease, transform 0.3s ease;
+  }
+
+  .logo-icon:hover {
+    filter: drop-shadow(0 0 18px rgba(255,87,0,0.45));
+    transform: scale(1.05);
+  }
+
+  .logo-text {
+    font-size: 18px; font-weight: 700; color: var(--gold); line-height: 1.1;
+    text-shadow: 0 0 20px rgba(255,87,0,0.15);
+  }
+
+  .logo-sub {
+    font-size: 11px; color: var(--muted); letter-spacing: 2px; text-transform: uppercase;
+    transition: color 0.3s ease;
+  }
+
+  .header-btns { display: flex; gap: 8px; flex-wrap: wrap; }
+
+  .btn {
+    background: var(--gold); color: #000;
+    border: none; padding: 10px 18px;
+    border-radius: 8px; font-weight: 700; font-size: 13px;
+    cursor: pointer; display: flex; align-items: center; gap: 6px;
+    transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+
+  .btn:hover {
+    background: var(--gold-light);
+    transform: translateY(-1px);
+    box-shadow: 0 4px 20px rgba(255,87,0,0.35);
+  }
+
+  .btn:active { transform: translateY(0); }
+
+  .btn-outline {
+    background: transparent; color: var(--text);
+    border: 1px solid #333;
+    transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+
+  .btn-outline:hover {
+    background: rgba(255,255,255,0.05);
+    border-color: rgba(255,87,0,0.3);
+    transform: translateY(-1px);
+    box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+  }
+
+  .main { display: grid; grid-template-columns: 320px 1fr; gap: 0; height: calc(100vh - 68px - 44px); overflow: hidden; }
+
+  .sidebar {
+    overflow-y: auto; background: var(--panel); border-right: 1px solid #222; padding: 14px;
+    scrollbar-width: thin;
+    scrollbar-color: rgba(255,87,0,0.2) transparent;
+  }
+
+  .sidebar::-webkit-scrollbar { width: 5px; }
+  .sidebar::-webkit-scrollbar-track { background: transparent; }
+  .sidebar::-webkit-scrollbar-thumb { background: rgba(255,87,0,0.15); border-radius: 10px; }
+  .sidebar::-webkit-scrollbar-thumb:hover { background: rgba(255,87,0,0.35); }
+
+  .canvas-area { display: flex; align-items: center; justify-content: center; background: #050505; padding: 20px; overflow: auto; }
+
+  .panel {
+    background: var(--panel2); border-radius: 10px; padding: 14px; margin-bottom: 12px;
+    border: 1px solid rgba(255,255,255,0.02);
+    transition: border-color 0.3s ease, box-shadow 0.3s ease, transform 0.2s ease;
+  }
+
+  .panel:hover {
+    border-color: rgba(255,87,0,0.08);
+    box-shadow: 0 2px 20px rgba(0,0,0,0.2);
+  }
+
+  .panel-title {
+    font-size: 11px; font-weight: 700; color: var(--gold);
+    letter-spacing: 2px; text-transform: uppercase;
+    margin-bottom: 12px; display: flex; align-items: center; gap: 7px;
+  }
+
+  .upload-zone {
+    border: 2px dashed rgba(255,87,0,0.4);
+    border-radius: 10px;
+    padding: 28px 16px;
+    text-align: center;
+    cursor: pointer;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    position: relative;
+    user-select: none;
+    -webkit-user-select: none;
+  }
+
+  .upload-zone:hover, .upload-zone.drag-over {
+    background: rgba(255,87,0,.08);
+    border-color: var(--gold-light);
+    box-shadow: inset 0 0 30px rgba(255,87,0,0.05);
+  }
+
+  .upload-zone input[type="file"] {
+    position: absolute; inset: 0; opacity: 0; width: 100%; height: 100%;
+    cursor: pointer; z-index: 2;
+  }
+
+  .upload-icon { font-size: 30px; margin-bottom: 6px; }
+  .upload-zone strong { display: block; font-size: 14px; color: var(--text); margin-bottom: 4px; }
+  .upload-zone span { font-size: 11px; color: var(--muted); }
+  .upload-preview { width: 100%; height: 60px; object-fit: cover; border-radius: 6px; margin-top: 8px; display: none; }
+
+  label.lbl { font-size: 11px; color: var(--muted); display: block; margin: 10px 0 4px; }
+  input[type="range"] { width: 100%; accent-color: var(--gold); margin: 4px 0; }
+  input[type="color"] { width: 40px; height: 30px; border: none; border-radius: 4px; cursor: pointer; background: none; padding: 0; }
+
+  select, textarea {
+    width: 100%; padding: 8px 10px;
+    background: var(--input); border: 1px solid var(--border); color: var(--text);
+    border-radius: 6px; font-size: 13px; outline: none;
+    transition: border-color 0.2s ease, box-shadow 0.2s ease;
+  }
+
+  select:focus, textarea:focus {
+    border-color: var(--gold);
+    box-shadow: 0 0 0 2px rgba(255,87,0,0.1);
+  }
+
+  textarea { min-height: 55px; resize: vertical; font-family: inherit; line-height: 1.4; }
+
+  .tabs { display: flex; background: var(--input); border-radius: 8px; padding: 3px; gap: 3px; margin-bottom: 10px; }
+
+  .tab {
+    flex: 1; padding: 7px; border: none; background: none;
+    color: var(--muted); font-size: 12px; font-weight: 600;
+    border-radius: 6px; cursor: pointer;
+    transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+
+  .tab.active { background: var(--gold); color: #000; }
+  .tab:not(.active):hover { color: var(--text); background: rgba(255,255,255,0.03); }
+
+  .style-row { display: flex; gap: 5px; margin: 8px 0; flex-wrap: wrap; }
+
+  .style-btn {
+    flex: 1; min-width: 34px; padding: 6px;
+    background: var(--input); border: 1px solid var(--border);
+    color: var(--text); border-radius: 5px; cursor: pointer;
+    font-size: 13px; font-weight: 600;
+    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+
+  .style-btn:hover { background: #333; border-color: rgba(255,87,0,0.2); }
+  .style-btn.active { background: var(--gold); color: #000; border-color: var(--gold); }
+
+  .tpl-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+
+  .tpl-btn {
+    background: var(--input); border: 1px solid var(--border);
+    color: var(--text); padding: 10px 6px; border-radius: 8px;
+    font-size: 12px; font-weight: 600; cursor: pointer;
+    transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+
+  .tpl-btn:hover {
+    border-color: var(--gold); color: var(--gold);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 15px rgba(255,87,0,0.1);
+  }
+
+  .row2 { display: flex; align-items: center; gap: 8px; }
+  .row2 label { font-size: 11px; color: var(--muted); white-space: nowrap; }
+  .val-badge { background: var(--input); border-radius: 4px; padding: 2px 6px; font-size: 11px; min-width: 30px; text-align: center; }
+
+  .toggle-row { display: flex; align-items: center; justify-content: space-between; margin: 6px 0; }
+  .toggle-row label { font-size: 12px; color: #ccc; }
+
+  .toggle { position: relative; display: inline-block; width: 36px; height: 20px; }
+  .toggle input { opacity: 0; width: 0; height: 0; }
+
+  .slider-tog {
+    position: absolute; cursor: pointer; inset: 0;
+    background: #333; border-radius: 20px; transition: .2s;
+  }
+
+  .slider-tog:before {
+    content: ''; position: absolute;
+    height: 14px; width: 14px; left: 3px; bottom: 3px;
+    background: #fff; border-radius: 50%; transition: .2s;
+  }
+
+  input:checked + .slider-tog { background: var(--gold); }
+  input:checked + .slider-tog:before { transform: translateX(16px); }
+
+  canvas {
+    display: block; border-radius: 10px; max-width: 100%; max-height: calc(100vh - 110px);
+    box-shadow: 0 10px 40px rgba(0,0,0,.7), 0 0 80px rgba(0,0,0,0.3);
+    transition: box-shadow 0.3s ease;
+  }
+
+  .notif {
+    position: fixed; bottom: 20px; right: 20px;
+    background: #1A5A1A; color: #fff; padding: 10px 16px;
+    border-radius: 8px; font-size: 13px; z-index: 999;
+    opacity: 0; transition: opacity .3s; pointer-events: none;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.4);
+  }
+
+  .notif.show { opacity: 1; }
+
+  .bg-motion-container {
+    position: fixed;
+    inset: 0;
+    z-index: -1;
+    overflow: hidden;
+    pointer-events: none;
+    background: var(--dark);
+  }
+
+  .bg-layer {
+    position: absolute;
+    top: -10%;
+    left: -10%;
+    width: 120%;
+    height: 120%;
+    object-fit: cover;
+    will-change: transform, opacity;
+    user-select: none;
+    -webkit-user-drag: none;
+    opacity: 0.15;
+  }
+
+  .bg-layer-1 { animation: kenBurns1 55s ease-in-out infinite; }
+  .bg-layer-2 { animation: kenBurns2 65s ease-in-out infinite; animation-delay: -14s; }
+
+  .bg-overlay {
+    position: absolute;
+    inset: 0;
+    background:
+      radial-gradient(ellipse at 50% 40%, rgba(10,10,10,0.2) 0%, rgba(10,10,10,0.4) 50%, rgba(10,10,10,0.7) 100%),
+      linear-gradient(180deg, rgba(10,10,10,0.5) 0%, rgba(10,10,10,0.3) 30%, rgba(10,10,10,0.4) 70%, rgba(10,10,10,0.6) 100%);
+  }
+
+  .bg-accent {
+    position: absolute;
+    inset: 0;
+    background:
+      radial-gradient(ellipse at 25% 50%, rgba(255,87,0,0.03) 0%, transparent 50%),
+      radial-gradient(ellipse at 75% 30%, rgba(200,100,50,0.02) 0%, transparent 50%);
+    animation: accentShift 25s ease-in-out infinite;
+  }
+
+  @keyframes kenBurns1 {
+    0%   { transform: translate(0%, 0%) scale(1.05); }
+    25%  { transform: translate(-2%, -1%) scale(1.08); }
+    50%  { transform: translate(-3%, -2%) scale(1.1); }
+    75%  { transform: translate(-1%, -1%) scale(1.07); }
+    100% { transform: translate(0%, 0%) scale(1.05); }
+  }
+
+  @keyframes kenBurns2 {
+    0%   { transform: translate(-3%, -1%) scale(1.08); }
+    25%  { transform: translate(-1%, -2%) scale(1.05); }
+    50%  { transform: translate(0%, 0%) scale(1.1); }
+    75%  { transform: translate(-2%, -1%) scale(1.06); }
+    100% { transform: translate(-3%, -1%) scale(1.08); }
+  }
+
+  @keyframes accentShift {
+    0%, 100% { opacity: 0.5; transform: scale(1) rotate(0deg); }
+    50%      { opacity: 1; transform: scale(1.1) rotate(1deg); }
+  }
+
+  .app-footer {
+    height: 44px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    padding: 0 20px;
+    color: rgba(255,255,255,0.25);
+    font-size: 11.5px;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    border-top: 1px solid rgba(255,255,255,0.03);
+    background: rgba(10,10,10,0.85);
+    backdrop-filter: blur(15px);
+    -webkit-backdrop-filter: blur(15px);
+    flex-shrink: 0;
+    position: relative;
+    z-index: 50;
+  }
+
+  .app-footer span {
+    color: rgba(255,87,0,0.4);
+    font-weight: 600;
+  }
+
+  .logout-btn {
+    background: rgba(220,38,38,0.15);
+    border: 1px solid rgba(220,38,38,0.3);
+    color: #fca5a5;
+    padding: 8px 16px;
+    border-radius: 6px;
+    font-size: 12px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+  }
+
+  .logout-btn:hover {
+    background: rgba(220,38,38,0.25);
+    border-color: rgba(220,38,38,0.5);
+  }
+
+  @media (max-width: 800px) {
+    .main { grid-template-columns: 1fr; height: auto; }
+    .canvas-area { min-height: 50vw; padding: 10px; }
+    canvas { max-height: 70vw; }
+    .sidebar { max-height: none; }
+    .auth-box { padding: 30px 20px; }
+  }
+</style>
+</head>
+<body>
+
+<div class="bg-motion-container">
+  <img src="bg1.jpg" class="bg-layer bg-layer-1" alt="" draggable="false">
+  <img src="bg2.jpg" class="bg-layer bg-layer-2" alt="" draggable="false">
+  <div class="bg-accent"></div>
+  <div class="bg-overlay"></div>
+</div>
+
+<div class="auth-container" id="authContainer">
+  <div class="auth-box" id="loginBox">
+    <div class="auth-header">
+      <img src="logo.png" alt="MazziGroup" class="auth-logo">
+      <div class="auth-title">Welcome Back</div>
+      <div class="auth-subtitle">MazziGroup Post Editor</div>
+    </div>
+    <div class="error-msg" id="loginError"></div>
+    <form class="auth-form" onsubmit="handleLogin(event)">
+      <div class="form-group">
+        <label>Username</label>
+        <input type="text" id="loginUsername" required autocomplete="username" placeholder="Enter your username">
+      </div>
+      <div class="form-group">
+        <label>Password</label>
+        <input type="password" id="loginPassword" required autocomplete="current-password" placeholder="Enter your password">
+      </div>
+      <div class="remember-row">
+        <label class="remember-label">
+          <input type="checkbox" id="rememberMe">
+          <span>Remember Me</span>
+        </label>
+      </div>
+      <button type="submit" class="auth-btn">Login to Editor</button>
+    </form>
+    <div class="auth-switch">
+      Don't have an account? <a onclick="showRegister()">Create One</a>
+    </div>
+  </div>
+
+  <div class="auth-box hidden" id="registerBox">
+    <div class="auth-header">
+      <img src="logo.png" alt="MazziGroup" class="auth-logo">
+      <div class="auth-title">Create Account</div>
+      <div class="auth-subtitle">Join Mazzideno</div>
+    </div>
+    <div class="error-msg" id="registerError"></div>
+    <div class="success-msg" id="registerSuccess"></div>
+    <form class="auth-form" onsubmit="handleRegister(event)">
+      <div class="form-group">
+        <label>Username</label>
+        <input type="text" id="regUsername" required autocomplete="username" placeholder="Choose a username">
+      </div>
+      <div class="form-group">
+        <label>Password</label>
+        <input type="password" id="regPassword" required autocomplete="new-password" placeholder="Choose a password" minlength="4">
+      </div>
+      <div class="form-group">
+        <label>Confirm Password</label>
+        <input type="password" id="regConfirmPassword" required autocomplete="new-password" placeholder="Confirm your password">
+      </div>
+      <button type="submit" class="auth-btn">Create Account</button>
+    </form>
+    <div class="auth-switch">
+      Already have an account? <a onclick="showLogin()">Login</a>
+    </div>
+  </div>
+</div>
+
+<div id="mainApp" class="hidden">
+  <div class="header">
+    <div class="logo-row">
+      <img src="logo.png" alt="MazziGroup" class="logo-icon" draggable="false">
+      <div>
+        <div class="logo-text">MazziGroup Post Editor</div>
+        <div class="logo-sub">Built for Mazzideno</div>
+      </div>
+    </div>
+    <div class="header-btns">
+      <button class="btn btn-outline" onclick="resetAll()">↺ Reset</button>
+      <button class="logout-btn" onclick="handleLogout()">Logout</button>
+      <button class="btn" onclick="exportImage('jpeg')">⬇ Export JPG</button>
+      <button class="btn" onclick="exportImage('png')">⬇ Export PNG</button>
+    </div>
+  </div>
+
+  <div class="main">
+    <div class="sidebar">
+      <div class="panel">
+        <div class="panel-title">🖼 Background</div>
+        <div class="upload-zone" id="uploadZone">
+          <input type="file" id="fileInput" accept="image/*">
+          <div class="upload-icon">⬆️</div>
+          <strong>Click or drag image here</strong>
+          <span>PNG, JPG, WEBP</span>
+        </div>
+        <img id="uploadPreview" class="upload-preview">
+        <div style="display:flex;gap:6px;margin-top:8px">
+          <button class="btn" style="flex:1;padding:8px;font-size:12px" onclick="triggerUpload()">📁 Browse File</button>
+          <button class="btn btn-outline" style="flex:1;padding:8px;font-size:12px" onclick="clearBg()">✕ Clear</button>
+        </div>
+        <label class="lbl">Overlay Darkness</label>
+        <div class="row2">
+          <input type="range" id="overlayOpacity" min="0" max="90" value="45" oninput="draw(); document.getElementById('overlayVal').textContent=this.value+'%'">
+          <span class="val-badge" id="overlayVal">45%</span>
+        </div>
+      </div>
+
+      <div class="panel">
+        <div class="panel-title">📐 Canvas Size</div>
+        <select id="canvasSize" onchange="changeCanvasSize()">
+          <option value="1080x1080">IG Post — 1080×1080</option>
+          <option value="1080x1920">IG Story — 1080×1920</option>
+          <option value="1280x720">YouTube — 1280×720</option>
+          <option value="1200x630">Facebook — 1200×630</option>
+        </select>
+      </div>
+
+      <div class="panel">
+        <div class="panel-title">⚡ Quick Templates</div>
+        <div class="tpl-grid">
+          <button class="tpl-btn" onclick="loadTemplate(0)">Faith</button>
+          <button class="tpl-btn" onclick="loadTemplate(1)">Prayer</button>
+          <button class="tpl-btn" onclick="loadTemplate(2)">Worship</button>
+          <button class="tpl-btn" onclick="loadTemplate(3)">Remnant</button>
+        </div>
+      </div>
+
+      <div class="panel">
+        <div class="panel-title">✏️ Text Layers</div>
+        <div class="tabs">
+          <button class="tab active" onclick="switchTab('quote',this)">Quote</button>
+          <button class="tab" onclick="switchTab('verse',this)">Verse</button>
+          <button class="tab" onclick="switchTab('prayer',this)">Prayer</button>
+        </div>
+
+        <div id="tab-quote">
+          <label class="lbl">Text</label>
+          <textarea id="quoteText" oninput="draw()" rows="3">The remnant will arise in glory</textarea>
+          <label class="lbl">Font</label>
+          <select id="quoteFont" onchange="draw()">
+            <option value="Georgia,serif">Georgia</option>
+            <option value="'Times New Roman',serif">Times New Roman</option>
+            <option value="Arial,sans-serif">Arial</option>
+            <option value="Verdana,sans-serif">Verdana</option>
+            <option value="Impact,sans-serif">Impact</option>
+          </select>
+          <label class="lbl">Size: <span id="quoteSizeVal">54</span>px</label>
+          <input type="range" id="quoteSize" min="16" max="110" value="54" oninput="draw(); document.getElementById('quoteSizeVal').textContent=this.value">
+          <div class="style-row">
+            <button class="style-btn active" id="quoteBold" onclick="toggleStyle('quote','bold')">B</button>
+            <button class="style-btn active" id="quoteItalic" onclick="toggleStyle('quote','italic')">I</button>
+            <button class="style-btn active" id="quoteAlignLeft" onclick="setAlign('quote','left')">◀</button>
+            <button class="style-btn" id="quoteAlignCenter" onclick="setAlign('quote','center')">▐</button>
+            <button class="style-btn" id="quoteAlignRight" onclick="setAlign('quote','right')">▶</button>
+          </div>
+          <label class="lbl">Color</label>
+          <input type="color" id="quoteColor" value="#FFFFFF" oninput="draw()">
+        </div>
+
+        <div id="tab-verse" style="display:none">
+          <label class="lbl">Verse / Scripture</label>
+          <textarea id="verseText" oninput="draw()" rows="3"></textarea>
+          <label class="lbl">Size: <span id="verseSizeVal">26</span>px</label>
+          <input type="range" id="verseSize" min="12" max="60" value="26" oninput="draw(); document.getElementById('verseSizeVal').textContent=this.value">
+          <div class="style-row">
+            <button class="style-btn" id="verseBold" onclick="toggleStyle('verse','bold')">B</button>
+            <button class="style-btn active" id="verseItalic" onclick="toggleStyle('verse','italic')">I</button>
+            <button class="style-btn active" id="verseAlignLeft" onclick="setAlign('verse','left')">◀</button>
+            <button class="style-btn" id="verseAlignCenter" onclick="setAlign('verse','center')">▐</button>
+            <button class="style-btn" id="verseAlignRight" onclick="setAlign('verse','right')">▶</button>
+          </div>
+          <label class="lbl">Color</label>
+          <input type="color" id="verseColor" value="#FF5700" oninput="draw()">
+        </div>
+
+        <div id="tab-prayer" style="display:none">
+          <label class="lbl">Prayer / Caption</label>
+          <textarea id="prayerText" oninput="draw()" rows="4"></textarea>
+          <label class="lbl">Size: <span id="prayerSizeVal">22</span>px</label>
+          <input type="range" id="prayerSize" min="12" max="60" value="22" oninput="draw(); document.getElementById('prayerSizeVal').textContent=this.value">
+          <div class="style-row">
+            <button class="style-btn" id="prayerBold" onclick="toggleStyle('prayer','bold')">B</button>
+            <button class="style-btn" id="prayerItalic" onclick="toggleStyle('prayer','italic')">I</button>
+            <button class="style-btn active" id="prayerAlignLeft" onclick="setAlign('prayer','left')">◀</button>
+            <button class="style-btn" id="prayerAlignCenter" onclick="setAlign('prayer','center')">▐</button>
+            <button class="style-btn" id="prayerAlignRight" onclick="setAlign('prayer','right')">▶</button>
+          </div>
+          <label class="lbl">Color</label>
+          <input type="color" id="prayerColor" value="#FFFFFF" oninput="draw()">
+        </div>
+      </div>
+
+      <div class="panel">
+        <div class="panel-title">⚙️ Options</div>
+        <div class="toggle-row">
+          <label>Mazzideno Watermark</label>
+          <label class="toggle"><input type="checkbox" id="watermark" checked onchange="draw()"><span class="slider-tog"></span></label>
+        </div>
+        <div class="toggle-row">
+          <label>Text Shadow</label>
+          <label class="toggle"><input type="checkbox" id="shadow" checked onchange="draw()"><span class="slider-tog"></span></label>
+        </div>
+        <div class="toggle-row">
+          <label>Left-side Text Column</label>
+          <label class="toggle"><input type="checkbox" id="leftLayout" onchange="draw()"><span class="slider-tog"></span></label>
+        </div>
+        <label class="lbl">Line Spacing</label>
+        <div class="row2">
+          <input type="range" id="lineSpacing" min="1" max="2" step="0.05" value="1.35" oninput="draw(); document.getElementById('lsVal').textContent=this.value">
+          <span class="val-badge" id="lsVal">1.35</span>
+        </div>
+      </div>
+
+      <div class="panel">
+        <div class="panel-title">📏 Text Margin</div>
+        <label class="lbl">Left/Right padding (px)</label>
+        <div class="row2">
+          <input type="range" id="textPad" min="30" max="250" value="80" oninput="draw(); document.getElementById('padVal').textContent=this.value+'px'">
+          <span class="val-badge" id="padVal">80px</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="canvas-area">
+      <canvas id="canvas" width="1080" height="1080"></canvas>
+    </div>
+  </div>
+
+  <footer class="app-footer">
+    Built by <span>&nbsp;MazziGroup&nbsp;</span> · All Rights Reserved
+  </footer>
+</div>
+
+<div class="notif" id="notif"></div>
+
+<script>
+window.addEventListener('DOMContentLoaded', () => { checkAutoLogin(); });
+
+function checkAutoLogin() {
+  const remembered = localStorage.getItem('mazzi_remembered_user');
+  if (remembered) {
+    const userData = JSON.parse(remembered);
+    const users = JSON.parse(localStorage.getItem('mazzi_users') || '[]');
+    const user = users.find(u => u.username === userData.username && u.password === userData.password);
+    if (user) { showMainApp(); notify(`Welcome back, ${user.username}!`); }
+    else { localStorage.removeItem('mazzi_remembered_user'); }
+  }
+}
+
+function showLogin() {
+  document.getElementById('loginBox').classList.remove('hidden');
+  document.getElementById('registerBox').classList.add('hidden');
+  clearAuthMessages();
+}
+
+function showRegister() {
+  document.getElementById('registerBox').classList.remove('hidden');
+  document.getElementById('loginBox').classList.add('hidden');
+  clearAuthMessages();
+}
+
+function clearAuthMessages() {
+  document.getElementById('loginError').classList.remove('show');
+  document.getElementById('registerError').classList.remove('show');
+  document.getElementById('registerSuccess').classList.remove('show');
+}
+
+function handleRegister(e) {
+  e.preventDefault();
+  const username = document.getElementById('regUsername').value.trim();
+  const password = document.getElementById('regPassword').value;
+  const confirmPassword = document.getElementById('regConfirmPassword').value;
+  const errorEl = document.getElementById('registerError');
+  const successEl = document.getElementById('registerSuccess');
+
+  if (password !== confirmPassword) {
+    errorEl.textContent = 'Passwords do not match!';
+    errorEl.classList.add('show'); successEl.classList.remove('show'); return;
+  }
+  if (password.length < 4) {
+    errorEl.textContent = 'Password must be at least 4 characters!';
+    errorEl.classList.add('show'); successEl.classList.remove('show'); return;
+  }
+
+  const users = JSON.parse(localStorage.getItem('mazzi_users') || '[]');
+  if (users.find(u => u.username === username)) {
+    errorEl.textContent = 'Username already exists!';
+    errorEl.classList.add('show'); successEl.classList.remove('show'); return;
+  }
+
+  users.push({ username, password });
+  localStorage.setItem('mazzi_users', JSON.stringify(users));
+  successEl.textContent = 'Account created successfully! You can now login.';
+  successEl.classList.add('show'); errorEl.classList.remove('show');
+  document.getElementById('regUsername').value = '';
+  document.getElementById('regPassword').value = '';
+  document.getElementById('regConfirmPassword').value = '';
+  setTimeout(() => { showLogin(); }, 2000);
+}
+
+function handleLogin(e) {
+  e.preventDefault();
+  const username = document.getElementById('loginUsername').value.trim();
+  const password = document.getElementById('loginPassword').value;
+  const rememberMe = document.getElementById('rememberMe').checked;
+  const errorEl = document.getElementById('loginError');
+  const users = JSON.parse(localStorage.getItem('mazzi_users') || '[]');
+  const user = users.find(u => u.username === username && u.password === password);
+
+  if (!user) {
+    errorEl.textContent = 'Invalid username or password!';
+    errorEl.classList.add('show'); return;
+  }
+
+  if (rememberMe) { localStorage.setItem('mazzi_remembered_user', JSON.stringify({ username, password })); }
+  else { localStorage.removeItem('mazzi_remembered_user'); }
+  localStorage.setItem('mazzi_current_user', JSON.stringify(user));
+  showMainApp();
+  notify(`Welcome, ${username}!`);
+}
+
+function handleLogout() {
+  localStorage.removeItem('mazzi_current_user');
+  document.getElementById('loginUsername').value = '';
+  document.getElementById('loginPassword').value = '';
+  document.getElementById('rememberMe').checked = false;
+  showAuthPage();
+  notify('Logged out successfully');
+}
+
+function showMainApp() {
+  document.getElementById('authContainer').classList.add('hidden');
+  document.getElementById('mainApp').classList.remove('hidden');
+  draw();
+}
+
+function showAuthPage() {
+  document.getElementById('authContainer').classList.remove('hidden');
+  document.getElementById('mainApp').classList.add('hidden');
+}
+
+const canvas = document.getElementById('canvas');
+const ctx = canvas.getContext('2d');
+let bgImage = null;
+
+const layers = {
+  quote:  { bold: true, italic: true, align: 'left' },
+  verse:  { bold: false, italic: true, align: 'left' },
+  prayer: { bold: false, italic: false, align: 'left' }
+};
+
+const templates = [
+  { quote: 'Choose faith\nover being perfect.', verse: '2 Corinthians 5:7', prayer: 'Help me walk by faith, not by sight.' },
+  { quote: 'This is my prayer:\n"Lord, give me a career that\nprovides, brings peace, and gives\nme purpose."', verse: 'One that will not only pay the bills,\nbut will also provide what I truly need.', prayer: 'Lord, prepare me for what You are\npreparing for me.\n\nAmen.' },
+  { quote: '"Nothing about me is\nself-made.\n\nI owe God everything."', verse: '', prayer: '' },
+  { quote: '"Let God handle it."', verse: '"Cast all your anxiety on Him because\nHe cares for you." – 1 Peter 5:7', prayer: 'It\'s no longer in your hands because you\nalready surrendered it to Him.\n\nLeave it all to Him. Rest.' }
+];
+
+function switchTab(name, btn) {
+  ['quote','verse','prayer'].forEach(t => { document.getElementById('tab-' + t).style.display = 'none'; });
+  document.getElementById('tab-' + name).style.display = 'block';
+  document.querySelectorAll('.tab').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+}
+
+function triggerUpload() { document.getElementById('fileInput').click(); }
+
+document.getElementById('fileInput').addEventListener('change', function() {
+  const file = this.files[0];
+  if (file) loadImageFile(file);
+});
+
+document.getElementById('uploadZone').addEventListener('click', function(e) {
+  if (e.target !== document.getElementById('fileInput')) { document.getElementById('fileInput').click(); }
+});
+
+const zone = document.getElementById('uploadZone');
+zone.addEventListener('dragover', function(e) { e.preventDefault(); e.stopPropagation(); zone.classList.add('drag-over'); });
+zone.addEventListener('dragleave', function() { zone.classList.remove('drag-over'); });
+zone.addEventListener('drop', function(e) {
+  e.preventDefault(); e.stopPropagation();
+  zone.classList.remove('drag-over');
+  const file = e.dataTransfer.files[0];
+  if (file && file.type.startsWith('image/')) loadImageFile(file);
+});
+
+function loadImageFile(file) {
+  const reader = new FileReader();
+  reader.onload = function(e) {
+    const img = new Image();
+    img.onload = function() {
+      bgImage = img;
+      const preview = document.getElementById('uploadPreview');
+      preview.src = e.target.result;
+      preview.style.display = 'block';
+      notify('✓ Background image loaded');
+      draw();
+    };
+    img.src = e.target.result;
+  };
+  reader.readAsDataURL(file);
+}
+
+function clearBg() {
+  bgImage = null;
+  document.getElementById('uploadPreview').style.display = 'none';
+  document.getElementById('fileInput').value = '';
+  draw();
+}
+
+function changeCanvasSize() {
+  const [w, h] = document.getElementById('canvasSize').value.split('x').map(Number);
+  canvas.width = w; canvas.height = h;
+  draw();
+}
+
+function loadTemplate(i) {
+  const t = templates[i];
+  document.getElementById('quoteText').value = t.quote;
+  document.getElementById('verseText').value = t.verse;
+  document.getElementById('prayerText').value = t.prayer;
+  draw();
+}
+
+function toggleStyle(layer, prop) {
+  layers[layer][prop] = !layers[layer][prop];
+  const id = layer + prop.charAt(0).toUpperCase() + prop.slice(1);
+  document.getElementById(id).classList.toggle('active');
+  draw();
+}
+
+function setAlign(layer, align) {
+  layers[layer].align = align;
+  ['Left','Center','Right'].forEach(a => {
+    const el = document.getElementById(layer + 'Align' + a);
+    if (el) el.classList.remove('active');
+  });
+  const tgt = document.getElementById(layer + 'Align' + align.charAt(0).toUpperCase() + align.slice(1));
+  if (tgt) tgt.classList.add('active');
+  draw();
+}
+
+function resetAll() {
+  clearBg();
+  document.getElementById('quoteText').value = 'The remnant will arise in glory';
+  document.getElementById('verseText').value = '';
+  document.getElementById('prayerText').value = '';
+  document.getElementById('quoteSize').value = 54;
+  document.getElementById('quoteSizeVal').textContent = 54;
+  document.getElementById('verseSize').value = 26;
+  document.getElementById('prayerSize').value = 22;
+  document.getElementById('quoteColor').value = '#FFFFFF';
+  document.getElementById('verseColor').value = '#FF5700';
+  document.getElementById('prayerColor').value = '#FFFFFF';
+  document.getElementById('watermark').checked = true;
+  document.getElementById('shadow').checked = true;
+  draw();
+}
+
+function draw() {
+  const W = canvas.width, H = canvas.height;
+  ctx.clearRect(0, 0, W, H);
+  ctx.fillStyle = '#000';
+  ctx.fillRect(0, 0, W, H);
+
+  if (bgImage) {
+    const scale = Math.max(W / bgImage.width, H / bgImage.height);
+    const bw = bgImage.width * scale;
+    const bh = bgImage.height * scale;
+    const bx = (W - bw) / 2;
+    const by = (H - bh) / 2;
+    ctx.drawImage(bgImage, bx, by, bw, bh);
+    const ov = parseInt(document.getElementById('overlayOpacity').value) / 100;
+    ctx.fillStyle = `rgba(0,0,0,${ov})`;
+    ctx.fillRect(0, 0, W, H);
+  }
+
+  const hasShadow = document.getElementById('shadow').checked;
+  const leftLayout = document.getElementById('leftLayout').checked;
+  const pad = parseInt(document.getElementById('textPad').value);
+  const lineSpacing = parseFloat(document.getElementById('lineSpacing').value);
+
+  const layerOrder = [
+    { key: 'quote',  yFrac: 0.38 },
+    { key: 'verse',  yFrac: 0.62 },
+    { key: 'prayer', yFrac: 0.80 }
+  ];
+
+  layerOrder.forEach(({ key, yFrac }) => {
+    const text = document.getElementById(key + 'Text').value.trim();
+    if (!text) return;
+
+    const size = parseInt(document.getElementById(key + 'Size').value);
+    const color = document.getElementById(key + 'Color').value;
+    const font = document.getElementById('quoteFont').value;
+    const L = layers[key];
+    const bold = L.bold ? 'bold ' : '';
+    const italic = L.italic ? 'italic ' : '';
+
+    ctx.font = `${italic}${bold}${size}px ${font}`;
+    ctx.fillStyle = color;
+    ctx.textAlign = leftLayout ? 'left' : L.align;
+
+    if (hasShadow) {
+      ctx.shadowColor = 'rgba(0,0,0,0.9)';
+      ctx.shadowBlur = 16;
+      ctx.shadowOffsetX = 2;
+      ctx.shadowOffsetY = 3;
+    } else {
+      ctx.shadowColor = 'transparent';
+      ctx.shadowBlur = 0;
+    }
+
+    const maxWidth = W - pad * 2;
+    const lines = wrapText(ctx, text, maxWidth);
+    const lh = size * lineSpacing;
+    const totalH = lines.length * lh;
+    const startY = H * yFrac - totalH / 2 + size;
+    const xPos = leftLayout ? pad : (L.align === 'left' ? pad : L.align === 'right' ? W - pad : W / 2);
+
+    lines.forEach((line, i) => { ctx.fillText(line, xPos, startY + i * lh); });
+  });
+
+  ctx.shadowColor = 'transparent';
+  ctx.shadowBlur = 0;
+
+  if (document.getElementById('watermark').checked) {
+    ctx.font = `bold ${Math.round(H * 0.018)}px Arial`;
+    ctx.fillStyle = 'rgba(255,87,0,0.9)';
+    ctx.textAlign = 'right';
+    ctx.letterSpacing = '3px';
+    ctx.fillText('MAZZIDENO', W - Math.round(W * 0.03), Math.round(H * 0.04));
+    ctx.letterSpacing = '0px';
+  }
+}
+
+function wrapText(ctx, text, maxWidth) {
+  const paragraphs = text.split('\n');
+  const lines = [];
+  paragraphs.forEach(para => {
+    if (!para.trim()) { lines.push(''); return; }
+    const words = para.split(' ');
+    let cur = '';
+    words.forEach(word => {
+      const test = cur ? cur + ' ' + word : word;
+      if (ctx.measureText(test).width > maxWidth && cur) { lines.push(cur); cur = word; }
+      else { cur = test; }
+    });
+    if (cur) lines.push(cur);
+  });
+  return lines;
+}
+
+function exportImage(format) {
+  const link = document.createElement('a');
+  const mime = format === 'png' ? 'image/png' : 'image/jpeg';
+  link.download = `mazzideno-quote.${format}`;
+  link.href = canvas.toDataURL(mime, 0.95);
+  link.click();
+  notify('✓ Image exported!');
+}
+
+function notify(msg) {
+  const n = document.getElementById('notif');
+  n.textContent = msg;
+  n.classList.add('show');
+  setTimeout(() => n.classList.remove('show'), 2500);
+}
+
+// ══════════════════════════════════════════
+// SERVICE WORKER REGISTRATION (PWA OFFLINE)
+// ══════════════════════════════════════════
+if ('serviceWorker' in navigator) {
+  navigator.serviceWorker.register('./sw.js')
+    .then((registration) => {
+      console.log('✓ Service Worker registered:', registration.scope);
+    })
+    .catch((error) => {
+      console.log('✗ Service Worker registration failed:', error);
+    });
+}
+</script>
+</body>
+</html>

@@ -1,0 +1,469 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Terms & Conditions - MazziGroup Post Editor</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  
+  body {
+    background: #0A0A0A;
+    color: #FFFFFF;
+    font-family: 'Segoe UI', Arial, sans-serif;
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+  }
+
+  .terms-container {
+    background: rgba(22, 22, 22, 0.95);
+    border: 2px solid rgba(255, 87, 0, 0.3);
+    border-radius: 20px;
+    max-width: 800px;
+    width: 100%;
+    max-height: 90vh;
+    display: flex;
+    flex-direction: column;
+    box-shadow: 0 25px 80px rgba(0, 0, 0, 0.8);
+    animation: slideIn 0.6s ease-out;
+  }
+
+  @keyframes slideIn {
+    from { opacity: 0; transform: translateY(50px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  .terms-header {
+    background: linear-gradient(135deg, rgba(255, 87, 0, 0.2), rgba(255, 107, 0, 0.1));
+    padding: 30px;
+    border-bottom: 2px solid rgba(255, 87, 0, 0.3);
+    border-radius: 18px 18px 0 0;
+    text-align: center;
+  }
+
+  .terms-logo {
+    width: 80px;
+    height: 80px;
+    margin: 0 auto 15px;
+    background: rgba(255, 87, 0, 0.1);
+    border: 3px solid #FF5700;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 40px;
+    font-weight: bold;
+    color: #FF5700;
+  }
+
+  .terms-header h1 {
+    color: #FF5700;
+    font-size: 28px;
+    margin-bottom: 8px;
+    text-shadow: 0 0 20px rgba(255, 87, 0, 0.3);
+  }
+
+  .terms-header p {
+    color: #888;
+    font-size: 14px;
+  }
+
+  .terms-content {
+    flex: 1;
+    overflow-y: auto;
+    padding: 30px;
+    background: rgba(10, 10, 10, 0.5);
+  }
+
+  .terms-content::-webkit-scrollbar {
+    width: 10px;
+  }
+
+  .terms-content::-webkit-scrollbar-track {
+    background: rgba(0, 0, 0, 0.3);
+    border-radius: 10px;
+  }
+
+  .terms-content::-webkit-scrollbar-thumb {
+    background: #FF5700;
+    border-radius: 10px;
+  }
+
+  .terms-content::-webkit-scrollbar-thumb:hover {
+    background: #FF6B00;
+  }
+
+  .section {
+    margin-bottom: 25px;
+  }
+
+  .section h2 {
+    color: #FF5700;
+    font-size: 18px;
+    margin-bottom: 12px;
+    padding-bottom: 8px;
+    border-bottom: 1px solid rgba(255, 87, 0, 0.3);
+  }
+
+  .section p, .section ul {
+    color: #CCCCCC;
+    line-height: 1.8;
+    font-size: 14px;
+    margin-bottom: 10px;
+  }
+
+  .section ul {
+    padding-left: 20px;
+  }
+
+  .section li {
+    margin-bottom: 8px;
+  }
+
+  .warning-box {
+    background: rgba(255, 87, 0, 0.1);
+    border-left: 4px solid #FF5700;
+    padding: 15px 20px;
+    margin: 20px 0;
+    border-radius: 0 8px 8px 0;
+  }
+
+  .warning-box strong {
+    color: #FF5700;
+    display: block;
+    margin-bottom: 8px;
+    font-size: 16px;
+  }
+
+  .highlight {
+    background: rgba(255, 87, 0, 0.15);
+    padding: 2px 6px;
+    border-radius: 4px;
+    color: #FF6B00;
+    font-weight: 600;
+  }
+
+  .terms-footer {
+    padding: 25px 30px;
+    background: rgba(0, 0, 0, 0.5);
+    border-top: 2px solid rgba(255, 87, 0, 0.3);
+    border-radius: 0 0 18px 18px;
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+  }
+
+  .checkbox-container {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    cursor: pointer;
+    padding: 10px;
+    border-radius: 8px;
+    transition: background 0.3s;
+  }
+
+  .checkbox-container:hover {
+    background: rgba(255, 87, 0, 0.05);
+  }
+
+  .checkbox-container input[type="checkbox"] {
+    width: 20px;
+    height: 20px;
+    margin-top: 2px;
+    accent-color: #FF5700;
+    cursor: pointer;
+  }
+
+  .checkbox-container label {
+    color: #CCCCCC;
+    font-size: 14px;
+    line-height: 1.6;
+    cursor: pointer;
+  }
+
+  .checkbox-container label a {
+    color: #FF5700;
+    text-decoration: none;
+  }
+
+  .checkbox-container label a:hover {
+    text-decoration: underline;
+  }
+
+  .agree-btn {
+    background: linear-gradient(135deg, #FF5700, #FF6B00);
+    color: #000;
+    border: none;
+    padding: 16px;
+    border-radius: 10px;
+    font-size: 16px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+  }
+
+  .agree-btn:hover:not(:disabled) {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 25px rgba(255, 87, 0, 0.4);
+  }
+
+  .agree-btn:disabled {
+    background: #333;
+    color: #666;
+    cursor: not-allowed;
+    opacity: 0.5;
+  }
+
+  .last-updated {
+    text-align: center;
+    color: #666;
+    font-size: 12px;
+    margin-top: 10px;
+  }
+
+  @media (max-width: 600px) {
+    .terms-container {
+      max-height: 95vh;
+    }
+    
+    .terms-header {
+      padding: 20px;
+    }
+    
+    .terms-content {
+      padding: 20px;
+    }
+    
+    .terms-footer {
+      padding: 20px;
+    }
+  }
+</style>
+</head>
+<body>
+
+<div class="terms-container">
+  <div class="terms-header">
+    <div class="terms-logo">M</div>
+    <h1>Terms & Conditions</h1>
+    <p>Please read carefully before using MazziGroup Post Editor</p>
+  </div>
+
+  <div class="terms-content">
+    <div class="section">
+      <h2>1. Acceptance of Terms</h2>
+      <p>
+        By accessing and using <span class="highlight">MazziGroup Post Editor</span> (the "Application"), you accept and agree to be bound by the terms and provision of this agreement. If you do not agree to abide by these terms, please do not use this Application.
+      </p>
+    </div>
+
+    <div class="section">
+      <h2>2. Description of Service</h2>
+      <p>
+        MazziGroup Post Editor is a <span class="highlight">free, offline web-based application</span> designed to help users create quote images, social media posts, and graphic content. The Application provides templates, text editing tools, and export functionality.
+      </p>
+      <ul>
+        <li>Create and edit text-based graphics</li>
+        <li>Upload and use custom backgrounds</li>
+        <li>Export images in JPG or PNG format</li>
+        <li>Use pre-made templates</li>
+        <li>100% offline functionality</li>
+      </ul>
+    </div>
+
+    <div class="warning-box">
+      <strong>⚠️ Important Notice</strong>
+      <p style="margin: 0; color: #ddd;">
+        This Application is provided <span class="highlight">"AS IS" and "AS AVAILABLE"</span> without any warranties, express or implied. We do not guarantee that the Application will be error-free, secure, or uninterrupted.
+      </p>
+    </div>
+
+    <div class="section">
+      <h2>3. User Responsibilities</h2>
+      <p>You agree to:</p>
+      <ul>
+        <li>Use the Application only for <span class="highlight">lawful purposes</span></li>
+        <li>Not use the Application to create content that is illegal, defamatory, obscene, or infringes on intellectual property rights</li>
+        <li>Not attempt to gain unauthorized access to any portion of the Application</li>
+        <li>Not use the Application to distribute malware or harmful code</li>
+        <li>Be responsible for all content you create and share using this Application</li>
+      </ul>
+    </div>
+
+    <div class="section">
+      <h2>4. Content Ownership</h2>
+      <p>
+        <span class="highlight">You retain all rights</span> to the content you create using MazziGroup Post Editor. However, you are solely responsible for ensuring that your content does not infringe on any third-party copyrights, trademarks, or other intellectual property rights.
+      </p>
+      <p>
+        By using this Application, you represent and warrant that you have all necessary rights to use any content (including images, text, and music) that you incorporate into your creations.
+      </p>
+    </div>
+
+    <div class="section">
+      <h2>5. Prohibited Uses</h2>
+      <p>You may NOT use this Application to:</p>
+      <ul>
+        <li>Create content that promotes hate speech, discrimination, or violence</li>
+        <li>Infringe on any patent, trademark, trade secret, copyright, or other intellectual property rights</li>
+        <li>Violate any local, state, national, or international law</li>
+        <li>Impersonate any person or entity</li>
+        <li>Create misleading, deceptive, or fraudulent content</li>
+        <li>Harass, abuse, or harm another person</li>
+        <li>Distribute viruses or any other harmful code</li>
+      </ul>
+    </div>
+
+    <div class="section">
+      <h2>6. Disclaimer of Warranties</h2>
+      <p>
+        THE APPLICATION IS PROVIDED <span class="highlight">"AS IS" WITHOUT WARRANTY OF ANY KIND</span>, EITHER EXPRESS OR IMPLIED, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE, OR NON-INFRINGEMENT.
+      </p>
+      <p>
+        We do not warrant that:
+      </p>
+      <ul>
+        <li>The Application will meet your requirements</li>
+        <li>The Application will be uninterrupted, timely, secure, or error-free</li>
+        <li>The results obtained from using the Application will be accurate or reliable</li>
+        <li>The quality of any products, services, information, or other material purchased or obtained through the Application will meet your expectations</li>
+        <li>Any errors in the Application will be corrected</li>
+      </ul>
+    </div>
+
+    <div class="section">
+      <h2>7. Limitation of Liability</h2>
+      <p>
+        <span class="highlight">IN NO EVENT SHALL Mazzigroup, MAZZIDENO, OR ANY AFFILIATES</span> BE LIABLE FOR ANY INDIRECT, INCIDENTAL, SPECIAL, CONSEQUENTIAL, OR PUNITIVE DAMAGES, INCLUDING WITHOUT LIMITATION, LOSS OF PROFITS, DATA, USE, GOODWILL, OR OTHER INTANGIBLE LOSSES, RESULTING FROM:
+      </p>
+      <ul>
+        <li>Your access to or use of or inability to access or use the Application</li>
+        <li>Any conduct or content of any third party on the Application</li>
+        <li>Any content obtained from the Application</li>
+        <li>Unauthorized access, use, or alteration of your transmissions or content</li>
+        <li>Any legal issues arising from content you create using this Application</li>
+      </ul>
+    </div>
+
+    <div class="warning-box">
+      <strong>📌 No Professional Advice</strong>
+      <p style="margin: 0; color: #ddd;">
+        This Application is a creative tool only. It does not provide legal, financial, medical, or professional advice. You should consult with appropriate professionals for such advice.
+      </p>
+    </div>
+
+    <div class="section">
+      <h2>8. Data and Privacy</h2>
+      <p>
+        Since this is an <span class="highlight">offline application</span>, we do not collect, store, or process any personal data on our servers. All data you create and store remains on your device only.
+      </p>
+      <p>
+        User accounts created within the Application are stored locally in your browser's localStorage and are not transmitted to any external server.
+      </p>
+    </div>
+
+    <div class="section">
+      <h2>9. Modifications to the Application</h2>
+      <p>
+        We reserve the right to modify or discontinue, temporarily or permanently, the Application (or any part thereof) with or without notice. We shall not be liable to you or to any third party for any modification, suspension, or discontinuance of the Application.
+      </p>
+    </div>
+
+    <div class="section">
+      <h2>10. Termination</h2>
+      <p>
+        We may terminate or suspend your access to the Application immediately, without prior notice or liability, for any reason whatsoever, including without limitation if you breach these Terms.
+      </p>
+    </div>
+
+    <div class="section">
+      <h2>11. Governing Law</h2>
+      <p>
+        These Terms shall be governed and construed in accordance with the laws of the jurisdiction in which Mazzigroup operates, without regard to its conflict of law provisions.
+      </p>
+    </div>
+
+    <div class="section">
+      <h2>12. Changes to These Terms</h2>
+      <p>
+        We reserve the right, at our sole discretion, to modify or replace these Terms at any time. By continuing to access or use our Application after those revisions become effective, you agree to be bound by the revised terms.
+      </p>
+    </div>
+
+    <div class="section">
+      <h2>13. Contact Information</h2>
+      <p>
+        If you have any questions about these Terms, please contact us at:
+      </p>
+      <p style="color: #FF5700; font-weight: 600;">
+        Email: mazzideno@gmail.com<br>
+        Application: MazziGroup Post Editor<br>
+        Built by: Mazzigroup
+      </p>
+    </div>
+
+    <div class="warning-box">
+      <strong>📝 Final Agreement</strong>
+      <p style="margin: 0; color: #ddd;">
+        BY CHECKING THE BOX BELOW AND CLICKING "I AGREE - CONTINUE TO APP", YOU ACKNOWLEDGE THAT YOU HAVE READ, UNDERSTOOD, AND AGREE TO BE BOUND BY THESE TERMS AND CONDITIONS. IF YOU DO NOT AGREE, PLEASE DO NOT USE THIS APPLICATION.
+      </p>
+    </div>
+  </div>
+
+  <div class="terms-footer">
+    <div class="checkbox-container">
+      <input type="checkbox" id="agreeCheckbox">
+      <label for="agreeCheckbox">
+        I have read, understood, and agree to be bound by these Terms and Conditions. I understand that this application is provided "as is" without warranties, and I am responsible for all content I create using this tool. I confirm that I am at least 13 years of age.
+      </label>
+    </div>
+    
+    <button class="agree-btn" id="agreeBtn" disabled>I AGREE - CONTINUE TO APP</button>
+    
+    <p class="last-updated">Last Updated: June 11, 2026</p>
+  </div>
+</div>
+
+<script>
+  // Check if already agreed
+  if (localStorage.getItem('mazzi_terms_agreed') === 'true') {
+    window.location.href = 'index.html';
+  }
+
+  // Enable/disable button based on checkbox
+  const checkbox = document.getElementById('agreeCheckbox');
+  const agreeBtn = document.getElementById('agreeBtn');
+
+  checkbox.addEventListener('change', function() {
+    agreeBtn.disabled = !this.checked;
+  });
+
+  // Handle agree button click
+  agreeBtn.addEventListener('click', function() {
+    if (checkbox.checked) {
+      // Store agreement in localStorage
+      localStorage.setItem('mazzi_terms_agreed', 'true');
+      localStorage.setItem('mazzi_terms_agreed_date', new Date().toISOString());
+      
+      // Redirect to main app
+      window.location.href = 'index.html';
+    }
+  });
+
+  // Prevent back button from bypassing terms
+  history.pushState(null, null, location.href);
+  window.onpopstate = function() {
+    if (!localStorage.getItem('mazzi_terms_agreed')) {
+      history.go(1);
+    }
+  };
+</script>
+
+</body>
+</html>

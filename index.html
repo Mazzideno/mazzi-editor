@@ -562,6 +562,12 @@
 </style>
 </head>
 <body>
+<!-- CHECK TERMS AGREEMENT -->
+<script>
+if (!localStorage.getItem('mazzi_terms_agreed')) {
+  window.location.href = 'terms.html';
+}
+</script>
 
 <div class="bg-motion-container">
   <img src="bg1.jpg" class="bg-layer bg-layer-1" alt="" draggable="false">

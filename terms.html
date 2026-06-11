@@ -44,19 +44,12 @@
     text-align: center;
   }
 
-  .terms-logo {
-    width: 80px;
-    height: 80px;
-    margin: 0 auto 15px;
-    background: rgba(255, 87, 0, 0.1);
-    border: 3px solid #FF5700;
-    border-radius: 50%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 40px;
-    font-weight: bold;
-    color: #FF5700;
+.terms-logo {
+     width: 42px; height: 42px;
+    object-fit: contain;
+    flex-shrink: 0;
+    filter: drop-shadow(0 0 12px rgba(255,87,0,0.25));
+    transition: filter 0.3s ease, transform 0.3s ease;
   }
 
   .terms-header h1 {
@@ -250,7 +243,7 @@
 
 <div class="terms-container">
   <div class="terms-header">
-    <div class="terms-logo">M</div>
+    <div><img src="logo.png" alt="Terms & Conditions" class="terms-logo"></div> 
     <h1>Terms & Conditions</h1>
     <p>Please read carefully before using MazziGroup Post Editor</p>
   </div>

@@ -2,15 +2,20 @@
   "manifest_version": 3,
   "name": "MazziGroup Post Editor",
   "version": "1.0",
-  "description": "Offline Post Editor",
+  "description": "Offline Post Editor by Mazzideno",
   "action": {
     "default_popup": "popup.html",
-    "default_icon": "logo.png"
+    "default_title": "MazziGroup Post Editor",
+    "default_icon": {
+      "16": "logo.png",
+      "48": "logo.png",
+      "128": "logo.png"
+    }
   },
-  "permissions": ["storage"],
   "icons": {
     "16": "logo.png",
     "48": "logo.png",
     "128": "logo.png"
-  }
+  },
+  "permissions": ["storage", "activeTab"]
 }

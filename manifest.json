@@ -1,25 +1,25 @@
 {
-  "manifest_version": 3,
   "name": "MazziGroup Post Editor",
   "short_name": "MazziEditor",
-  "description": "Offline Post Editor by Mazzideno",
+  "description": "Free offline post & quote image editor by Mazzideno",
   "start_url": "./index.html",
+  "id": "/mazzi-editor/",
   "display": "standalone",
   "background_color": "#0A0A0A",
   "theme_color": "#FF5700",
   "orientation": "portrait",
+  "categories": ["productivity", "utilities"],
   "icons": [
-    { "src": "logo.png", "sizes": "192x192", "type": "image/png" },
-    { "src": "logo.png", "sizes": "512x512", "type": "image/png" }
+    { "src": "logo.png", "sizes": "192x192", "type": "image/png", "purpose": "any maskable" },
+    { "src": "logo.png", "sizes": "512x512", "type": "image/png", "purpose": "any maskable" }
   ],
-  "action": {
-    "default_popup": "popup.html",
-    "default_title": "MazziGroup Post Editor",
-    "default_icon": {
-      "16": "logo.png",
-      "48": "logo.png",
-      "128": "logo.png"
+  "screenshots": [
+    {
+      "src": "logo.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "form_factor": "narrow",
+      "label": "MazziGroup Post Editor"
     }
-  },
-  "permissions": ["storage", "activeTab"]
+  ]
 }
